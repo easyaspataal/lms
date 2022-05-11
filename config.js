@@ -1,7 +1,7 @@
 var config = {
 	app: {
 		name: "lms",
-		url: "http://localhost:8060",
+		url: "https://lms-bk-7k5qcren2q-el.a.run.app",
 		frontendUrl: "https://lms.easyaspataal.com",
 		secret: "e99e28a3dfcb8d1eec09db84aa3b3a78",
 		language: "english",
