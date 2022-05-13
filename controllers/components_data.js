@@ -41,15 +41,15 @@ const Op = models.Op; // sequelize query operators
 
 
  /**
- * Route to check if field value already exist in a Hosp table
- * @route {GET} /components_data/hosp_hid_exist/{fieldvalue}
+ * Route to check if field value already exist in a Hospital table
+ * @route {GET} /components_data/hospital_hid_exist/{fieldvalue}
  * @param {string} path - Express paths
  * @param {callback} middleware - Express middleware.
  */
-router.get('/hosp_hid_exist/:fieldvalue', async (req, res) => {
+router.get('/hospital_hid_exist/:fieldvalue', async (req, res) => {
 	try{
 		let val = req.params.fieldvalue
-		let count = await models.Hosp.count({ where:{ 'hid': val } });
+		let count = await models.Hospital.count({ where:{ 'hid': val } });
 		if(count > 0){
 			return res.ok("true");
 		}
@@ -62,15 +62,78 @@ router.get('/hosp_hid_exist/:fieldvalue', async (req, res) => {
 
 
  /**
- * Route to check if field value already exist in a Hosp table
- * @route {GET} /components_data/hosp_email_exist/{fieldvalue}
+ * Route to check if field value already exist in a Hospital table
+ * @route {GET} /components_data/hospital_email_exist/{fieldvalue}
  * @param {string} path - Express paths
  * @param {callback} middleware - Express middleware.
  */
-router.get('/hosp_email_exist/:fieldvalue', async (req, res) => {
+router.get('/hospital_email_exist/:fieldvalue', async (req, res) => {
 	try{
 		let val = req.params.fieldvalue
-		let count = await models.Hosp.count({ where:{ 'email': val } });
+		let count = await models.Hospital.count({ where:{ 'email': val } });
+		if(count > 0){
+			return res.ok("true");
+		}
+		return res.ok("false");
+	}
+	catch(err){
+		return res.serverError(err);
+	}
+});
+
+
+ /**
+ * Route to check if field value already exist in a Lmsusers table
+ * @route {GET} /components_data/lmsusers_login_id_exist/{fieldvalue}
+ * @param {string} path - Express paths
+ * @param {callback} middleware - Express middleware.
+ */
+router.get('/lmsusers_login_id_exist/:fieldvalue', async (req, res) => {
+	try{
+		let val = req.params.fieldvalue
+		let count = await models.Lmsusers.count({ where:{ 'login_id': val } });
+		if(count > 0){
+			return res.ok("true");
+		}
+		return res.ok("false");
+	}
+	catch(err){
+		return res.serverError(err);
+	}
+});
+
+
+ /**
+ * Route to check if field value already exist in a Lmsusers table
+ * @route {GET} /components_data/lmsusers_email_exist/{fieldvalue}
+ * @param {string} path - Express paths
+ * @param {callback} middleware - Express middleware.
+ */
+router.get('/lmsusers_email_exist/:fieldvalue', async (req, res) => {
+	try{
+		let val = req.params.fieldvalue
+		let count = await models.Lmsusers.count({ where:{ 'email': val } });
+		if(count > 0){
+			return res.ok("true");
+		}
+		return res.ok("false");
+	}
+	catch(err){
+		return res.serverError(err);
+	}
+});
+
+
+ /**
+ * Route to check if field value already exist in a Lmsusers table
+ * @route {GET} /components_data/lmsusers_id_exist/{fieldvalue}
+ * @param {string} path - Express paths
+ * @param {callback} middleware - Express middleware.
+ */
+router.get('/lmsusers_id_exist/:fieldvalue', async (req, res) => {
+	try{
+		let val = req.params.fieldvalue
+		let count = await models.Lmsusers.count({ where:{ 'id': val } });
 		if(count > 0){
 			return res.ok("true");
 		}
@@ -169,7 +232,7 @@ router.post('/lms', async (req, res) => {
         console.log(req.body.start);
 var config = {
   method: 'get',
-  url: 'https://easylos.atlassian.net/rest/api/2/search?jql=status=Closed%20OR%20status=Collection%20OR%20status=Disbursement%20OR%20status=Hold%20OR%20status=Review&startAt='+req.body.start+'&maxResults=100',
+  url: 'https://easylos.atlassian.net/rest/api/2/search?jql=status!=%20"Ignore%20Mails"&startAt='+req.body.start+'&maxResults=100',
   headers: {
     'Authorization': 'Basic Y2hpcmFnQGVhc3lhc3BhdGFhbC5jb206RngzaHZOeXpzWmRQZjRNcmtzN0s5RUUw'
   }

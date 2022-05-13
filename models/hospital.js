@@ -5,11 +5,12 @@ class Hospital extends BaseModel {
 		return super.init(
 			{
 				
-				contact: { type: Sequelize.DECIMAL, primaryKey: true  },
+				contact: {name: 'contact', type:Sequelize.DECIMAL},
 				hid: {name: 'hid', type:Sequelize.STRING},
 				email: {name: 'email', type:Sequelize.STRING},
 				name: {name: 'name', type:Sequelize.STRING},
-				password: {name: 'password', type:Sequelize.STRING}
+				password: {name: 'password', type:Sequelize.STRING},
+				_id: { type: Sequelize.INTEGER, primaryKey: true , autoIncrement: true }
 			}, 
 			{ 
 				sequelize,
@@ -26,7 +27,8 @@ class Hospital extends BaseModel {
 			'contact', 
 			'hid', 
 			'email', 
-			'name'
+			'name', 
+			'_id'
 		];
 	}
 
@@ -36,14 +38,72 @@ class Hospital extends BaseModel {
 			'contact', 
 			'hid', 
 			'email', 
-			'name'
+			'name', 
+			'_id'
+		];
+	}
+
+	static viewFields() {
+		let sequelize = this.sequelize;
+		return [
+			'contact', 
+			'hid', 
+			'email', 
+			'name', 
+			'_id'
 		];
 	}
 
 	static exportViewFields() {
 		let sequelize = this.sequelize;
 		return [
-			
+			'contact', 
+			'hid', 
+			'email', 
+			'name', 
+			'_id'
+		];
+	}
+
+	static accounteditFields() {
+		let sequelize = this.sequelize;
+		return [
+			'contact', 
+			'hid', 
+			'name', 
+			'_id'
+		];
+	}
+
+	static accountviewFields() {
+		let sequelize = this.sequelize;
+		return [
+			'contact', 
+			'hid', 
+			'email', 
+			'name', 
+			'_id'
+		];
+	}
+
+	static exportAccountviewFields() {
+		let sequelize = this.sequelize;
+		return [
+			'contact', 
+			'hid', 
+			'email', 
+			'name', 
+			'_id'
+		];
+	}
+
+	static editFields() {
+		let sequelize = this.sequelize;
+		return [
+			'contact', 
+			'hid', 
+			'name', 
+			'_id'
 		];
 	}
 
@@ -53,8 +113,7 @@ class Hospital extends BaseModel {
 		return [
 			sequelize.literal("hid iLIKE :search"), 
 			sequelize.literal("email iLIKE :search"), 
-			sequelize.literal("name iLIKE :search"), 
-			sequelize.literal("password iLIKE :search"),
+			sequelize.literal("name iLIKE :search"),
 		];
 	}
 

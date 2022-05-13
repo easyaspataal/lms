@@ -1,7 +1,7 @@
 const models = require('../models/index.js');
 const config = require('../config.js');
 const utils = require('./utils.js');
-const Hosp = models.Hosp;
+const Lmsusers = models.Lmsusers;
 const sequelize = models.sequelize; // sequelize db models
 const Op = models.Op; // sequelize query operators
 module.exports = function(passport)
@@ -15,7 +15,7 @@ module.exports = function(passport)
 		try{
 			let userId = jwt_payload.sub; //get user id from jwt
 			if(userId){
-				let user = await Hosp.findOne({where: { 'id': userId}, attributes: {exclude:['password']} });
+				let user = await Lmsusers.findOne({where: { 'id': userId}, attributes: {exclude:['password']} });
 				done(null, user);
 			}
 			else{

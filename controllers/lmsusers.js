@@ -1,5 +1,5 @@
-/** Express router providing Hospital related routes
- * @module routers/Hospital
+/** Express router providing Lmsusers related routes
+ * @module routers/Lmsusers
  * @requires express
  * @requires config - app config
  * @requires utils - app utils functions
@@ -45,11 +45,11 @@ const { body, validationResult } = require('express-validator');
 
 
 /**
- * Hospital models
+ * Lmsusers models
  * @const
  */
 const models = require('../models/index.js');
-const Hospital = models.Hospital;
+const Lmsusers = models.Lmsusers;
 
 
 const sequelize = models.sequelize; // sequelize functions and operations
@@ -59,8 +59,8 @@ const Op = models.Op; // sequelize query operators
 
 
 /**
- * Route to list hospital records
- * @route {GET} /hospital/index/{fieldname}/{fieldvalue}
+ * Route to list lmsusers records
+ * @route {GET} /lmsusers/index/{fieldname}/{fieldvalue}
  * @param {array} path - Array of express paths
  * @param {callback} middleware - Express middleware.
  */
@@ -80,7 +80,7 @@ router.get(['/', '/index/:fieldname?/:fieldvalue?'], async (req, res) => {
 		}
 		let search = req.query.search;
 		if(search){
-			let searchFields = Hospital.searchFields();
+			let searchFields = Lmsusers.searchFields();
 			where[Op.or] = searchFields;
 			replacements.search = `%${search}%`;
 		}
@@ -89,11 +89,11 @@ router.get(['/', '/index/:fieldname?/:fieldvalue?'], async (req, res) => {
 		query.raw = true;
 		query.where = where;
 		query.replacements = replacements;
-		query.order = Hospital.getOrderBy(req);
-		query.attributes = Hospital.listFields();
+		query.order = Lmsusers.getOrderBy(req);
+		query.attributes = Lmsusers.listFields();
 		let page = parseInt(req.query.page) || 1;
 		let limit = parseInt(req.query.limit) || 20;
-		let result = await Hospital.paginate(query, page, limit);
+		let result = await Lmsusers.paginate(query, page, limit);
 		return res.ok(result);
 	}
 	catch(err) {
@@ -103,8 +103,8 @@ router.get(['/', '/index/:fieldname?/:fieldvalue?'], async (req, res) => {
 
 
 /**
- * Route to view Hospital record
- * @route {GET} /hospital/view/{recid}
+ * Route to view Lmsusers record
+ * @route {GET} /lmsusers/view/{recid}
  * @param {array} path - Array of express paths
  * @param {callback} middleware - Express middleware.
  */
@@ -113,11 +113,11 @@ router.get(['/view/:recid'], async (req, res) => {
 		let recid = req.params.recid || null;
 		let query = {}
 		let where = {}
-		where['_id'] = recid;
+		where['id'] = recid;
 		query.raw = true;
 		query.where = where;
-		query.attributes = Hospital.viewFields();
-		let record = await Hospital.findOne(query);
+		query.attributes = Lmsusers.viewFields();
+		let record = await Lmsusers.findOne(query);
 		if(!record){
 			return res.notFound();
 		}
@@ -130,17 +130,17 @@ router.get(['/view/:recid'], async (req, res) => {
 
 
 /**
- * Route to insert Hospital record
- * @route {POST} /hospital/add
+ * Route to insert Lmsusers record
+ * @route {POST} /lmsusers/add
  * @param {string} path - Express path
  * @param {callback} middleware - Express middleware.
  */
 router.post('/add/' , 
 	[
-		body('hid').not().isEmpty(),
-		body('email').not().isEmpty().isEmail(),
+		body('login_id').not().isEmpty().isEmail(),
 		body('password').not().isEmpty(),
 		body('confirm_password', 'Passwords do not match').custom((value, {req}) => (value === req.body.password)),
+		body('email').not().isEmpty().isEmail(),
 	]
 , async function (req, res) {
 	try{
@@ -151,19 +151,19 @@ router.post('/add/' ,
 		}
 		let modeldata = req.body;
 		modeldata.password = utils.passwordHash(modeldata.password);
-		let hidCount = await Hospital.count({ where:{ 'hid': modeldata.hid } });
-		if(hidCount > 0){
-			return res.badRequest(`${modeldata.hid} already exist.`);
+		let login_idCount = await Lmsusers.count({ where:{ 'login_id': modeldata.login_id } });
+		if(login_idCount > 0){
+			return res.badRequest(`${modeldata.login_id} already exist.`);
 		}
-		let emailCount = await Hospital.count({ where:{ 'email': modeldata.email } });
+		let emailCount = await Lmsusers.count({ where:{ 'email': modeldata.email } });
 		if(emailCount > 0){
 			return res.badRequest(`${modeldata.email} already exist.`);
 		}
 		
-		//save Hospital record
-		let record = await Hospital.create(modeldata);
+		//save Lmsusers record
+		let record = await Lmsusers.create(modeldata);
 		//await record.reload(); //reload the record from database
-		let recid =  record['_id'];
+		let recid =  record['id'];
 		
 		return res.ok(record);
 	} catch(err){
@@ -173,8 +173,8 @@ router.post('/add/' ,
 
 
 /**
- * Route to get  Hospital record for edit
- * @route {GET} /hospital/edit/{recid}
+ * Route to get  Lmsusers record for edit
+ * @route {GET} /lmsusers/edit/{recid}
  * @param {string} path - Express path
  * @param {callback} middleware - Express middleware.
  */
@@ -183,11 +183,11 @@ router.get('/edit/:recid', async (req, res) => {
 		let recid = req.params.recid;
 		let query = {};
 		let where = {};
-		where['_id'] = recid;
+		where['id'] = recid;
 		query.raw = true;
 		query.where = where;
-		query.attributes = Hospital.editFields();
-		let record = await Hospital.findOne(query);
+		query.attributes = Lmsusers.editFields();
+		let record = await Lmsusers.findOne(query);
 		if(!record){
 			return res.notFound();
 		}
@@ -200,16 +200,14 @@ router.get('/edit/:recid', async (req, res) => {
 
 
 /**
- * Route to update  Hospital record
- * @route {POST} /hospital/edit/{recid}
+ * Route to update  Lmsusers record
+ * @route {POST} /lmsusers/edit/{recid}
  * @param {string} path - Express path
  * @param {callback} middleware - Express middleware.
  */
 router.post('/edit/:recid' , 
 	[
-		body('contact').optional().isNumeric(),
-		body('hid').optional({nullable: true}).not().isEmpty(),
-		body('name').optional(),
+		body('id').optional({nullable: true}).not().isEmpty().isNumeric(),
 	]
 , async (req, res) => {
 	try{
@@ -220,21 +218,21 @@ router.post('/edit/:recid' ,
 		}
 		let recid = req.params.recid;
 		let modeldata = req.body;
-		let hidCount = await Hospital.count({where:{'hid': modeldata.hid, '_id': {[Op.ne]: recid} }});
-		if(hidCount > 0){
-			return res.badRequest(`${modeldata.hid} already exist.`);
+		let idCount = await Lmsusers.count({where:{'id': modeldata.id, 'id': {[Op.ne]: recid} }});
+		if(idCount > 0){
+			return res.badRequest(`${modeldata.id} already exist.`);
 		}
 		let query = {};
 		let where = {};
-		where['_id'] = recid;
+		where['id'] = recid;
 		query.raw = true;
 		query.where = where;
-		query.attributes = Hospital.editFields();
-		let record = await Hospital.findOne(query);
+		query.attributes = Lmsusers.editFields();
+		let record = await Lmsusers.findOne(query);
 		if(!record){
 			return res.notFound();
 		}
-		await Hospital.update(modeldata, {where: where});
+		await Lmsusers.update(modeldata, {where: where});
 		return res.ok(modeldata);
 	}
 	catch(err){
@@ -244,9 +242,9 @@ router.post('/edit/:recid' ,
 
 
 /**
- * Route to delete Hospital record by table primary key
+ * Route to delete Lmsusers record by table primary key
  * Multi delete supported by recid separated by comma(,)
- * @route {GET} /hospital/delete/{recid}
+ * @route {GET} /lmsusers/delete/{recid}
  * @param {array} path - Array of express paths
  * @param {callback} middleware - Express middleware.
  */
@@ -256,14 +254,14 @@ router.get('/delete/:recid', async (req, res) => {
 		recid = recid.split(',');
 		let query = {};
 		let where = {};
-		where['_id'] = recid;
+		where['id'] = recid;
 		query.raw = true;
 		query.where = where;
-		let records = await Hospital.findAll(query);
+		let records = await Lmsusers.findAll(query);
 		records.forEach(async (record) => { 
 			//perform action on each record before delete
 		});
-		await Hospital.destroy(query);
+		await Lmsusers.destroy(query);
 		return res.ok(recid);
 	}
 	catch(err){

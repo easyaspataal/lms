@@ -59,7 +59,7 @@ const { body, validationResult } = require('express-validator');
 
 
 const models = require('../models/index.js');
-const Hosp = models.Hosp;
+const Lmsusers = models.Lmsusers;
 
 
 const sequelize = models.sequelize; // sequelize functions and operations
@@ -122,7 +122,7 @@ router.post('/login', [
 			return res.badRequest(errorMsg);
 		}
 		let { username, password } = req.body;
-		let user = await Hosp.findOne({where: { 'hid': username}});
+		let user = await Lmsusers.findOne({where: { 'login_id': username}});
 		if(!user){
 			return res.unauthorized("Username or password not correct");
 		}
@@ -146,10 +146,10 @@ router.post('/login', [
  */
 router.post('/register', 
 	[
-		body('hid').not().isEmpty(),
-		body('email').not().isEmpty().isEmail(),
+		body('login_id').not().isEmpty().isEmail(),
 		body('password').not().isEmpty(),
 		body('confirm_password', 'Passwords do not match').custom((value, {req}) => (value === req.body.password)),
+		body('email').not().isEmpty().isEmail(),
 	]
 , async function (req, res) {
 	try{
@@ -161,15 +161,15 @@ router.post('/register',
 		}
 		let modeldata = req.body;
 		modeldata.password = utils.passwordHash(modeldata.password);
-		let hidCount = await Hosp.count({ where:{ 'hid': modeldata.hid } });
-		if(hidCount > 0){
-			return res.badRequest(`${modeldata.hid} already exist.`);
+		let login_idCount = await Lmsusers.count({ where:{ 'login_id': modeldata.login_id } });
+		if(login_idCount > 0){
+			return res.badRequest(`${modeldata.login_id} already exist.`);
 		}
-		let emailCount = await Hosp.count({ where:{ 'email': modeldata.email } });
+		let emailCount = await Lmsusers.count({ where:{ 'email': modeldata.email } });
 		if(emailCount > 0){
 			return res.badRequest(`${modeldata.email} already exist.`);
 		}
-		let record = user = await Hosp.create(modeldata); // user record
+		let record = user = await Lmsusers.create(modeldata); // user record
 		await user.reload();
 		let recid =  record['id'];
 		
@@ -198,7 +198,7 @@ router.post('/forgotpassword', [
 			return res.badRequest(errorMsg);
 		}
 		let email = req.body.email;
-		let user = await Hosp.findOne({where: { 'email': email} });
+		let user = await Lmsusers.findOne({where: { 'email': email} });
 		if(!user){
 			return res.notFound("Email not registered");
 		}
@@ -237,13 +237,13 @@ router.post('/resetpassword', [
 		let userid = getUserIDFromJwt(token)  //get user id from token payload
 		let password = req.body.password;
 		let where = {id: userid }
-		let record = await Hosp.findOne({where: where})
+		let record = await Lmsusers.findOne({where: where})
 		if(!record){
 			return res.notFound("User not found");
 		}
 		var newPassword = bcrypt.hashSync(password, 10);
 		var modeldata = {password: newPassword}
-		await Hosp.update(modeldata, {where: where});
+		await Lmsusers.update(modeldata, {where: where});
 		
 		return res.ok("Password changed");
 	}
@@ -259,7 +259,7 @@ router.post('/resetpassword', [
 async function sendPasswordResetLink(user){
 	let token = generateUserToken(user);
 	let resetlink = `${config.app.frontendUrl}/#/index/resetpassword?token=${token}`;
-	let username = user.hid;
+	let username = user.login_id;
 	let email = user.email;
 	let mailtitle = 'Password Reset';
 	

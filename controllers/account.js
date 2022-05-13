@@ -49,7 +49,7 @@ const { body, validationResult } = require('express-validator');
  * @const
  */
 const models = require('../models/index.js');
-const Hosp = models.Hosp;
+const Lmsusers = models.Lmsusers;
 
 
 const sequelize = models.sequelize; // sequelize functions and operations
@@ -70,8 +70,8 @@ router.get(['/','/index'], async (req, res) => {
 		where['id'] = recid;
 		query.raw = true;
 		query.where = where;
-		query.attributes = Hosp.accountviewFields();
-		let record = await Hosp.findOne(query);
+		query.attributes = Lmsusers.accountviewFields();
+		let record = await Lmsusers.findOne(query);
 		if(!record){
 			return res.notFound();
 		}
@@ -97,8 +97,8 @@ router.get('/edit', async (req, res) => {
 		where['id'] = recid;
 		query.raw = true;
 		query.where = where;
-		query.attributes = Hosp.accounteditFields();
-		let record = await Hosp.findOne(query);
+		query.attributes = Lmsusers.accounteditFields();
+		let record = await Lmsusers.findOne(query);
 		if(!record){
 			return res.badRequest("No record found");
 		}
@@ -118,9 +118,10 @@ router.get('/edit', async (req, res) => {
  */
 router.post('/edit' , 
 	[
-		body('contact').optional().isNumeric(),
-		body('hid').optional(),
-		body('name').optional(),
+		body('id').optional({nullable: true}).not().isEmpty().isNumeric(),
+		body('role_id').optional().isNumeric(),
+		body('login_id').optional(),
+		body('email').optional().isEmail(),
 	]
 , async (req, res) => {
 	try{
@@ -137,12 +138,12 @@ router.post('/edit' ,
 		where['id'] = recid;
 		query.where = where;
 		query.raw = true;
-		query.attributes = Hosp.accounteditFields();
-		let record = await Hosp.findOne(query);
+		query.attributes = Lmsusers.accounteditFields();
+		let record = await Lmsusers.findOne(query);
 		if(!record){
 			return res.notFound();
 		}
-		await Hosp.update(modeldata, {where: where});
+		await Lmsusers.update(modeldata, {where: where});
 		return res.ok(modeldata);
 	}
 	catch(err){
@@ -183,7 +184,7 @@ router.post('/changepassword' ,
 		query.raw = true;
 		query.where = where;
 		query.attributes = ['password'];
-		let user = await Hosp.findOne(query);
+		let user = await Lmsusers.findOne(query);
 		let currentPasswordHash = user.password;
 		if(!utils.passwordVerify(oldPassword, currentPasswordHash)){
 			return res.badRequest("Current password is incorrect");
@@ -191,7 +192,7 @@ router.post('/changepassword' ,
 		let modeldata = {
 			password: utils.passwordHash(newPassword)
 		}
-		await Hosp.update(modeldata, {where: where});
+		await Lmsusers.update(modeldata, {where: where});
 		return res.ok("Password change completed");
 	}
 	catch(err){

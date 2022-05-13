@@ -2,7 +2,7 @@ var config = {
 	app: {
 		name: "lms",
 		url: "https://lms-bk-7k5qcren2q-el.a.run.app",
-		frontendUrl: "https://lms.easyaspataal.com",
+		frontendUrl: "https://s3.ap-south-1.amazonaws.com/lms.easyaspataal.com/index.html",
 		secret: "e99e28a3dfcb8d1eec09db84aa3b3a78",
 		language: "english",
 		publicDir: "assets",
@@ -17,18 +17,15 @@ var config = {
 		otpDuration: 5, //in minutes
 	},
 	database: {
-
-
-		name:"ea_hospital_dashboard",
-	    type: "postgres",    
-		host: "easyaspataal-staging.cluster-cbqgtf1hzzqq.ap-south-1.rds.amazonaws.com",      
-		username: "easy_admin",       
-		password: "EasyAspatal1212",   
-		port: "5432",    
-		charset: "utf8", 
-		recordlimit: 10,   
-		ordertype: "DESC"
-
+		name:"LMS",
+        type: "postgres",
+        host: "easyaspataal-staging.cluster-cbqgtf1hzzqq.ap-south-1.rds.amazonaws.com",
+        username: "easy_admin",
+        password: "EasyAspatal1212",
+        port: "5432",
+        charset: "utf8",
+        recordlimit: 10,
+        ordertype: "DESC"
 	},
 	mail: {
 		username:"",

@@ -59,8 +59,9 @@ app.use('/api/admin', require('./controllers/admin.js'))
 app.use('/api/categories', require('./controllers/categories.js'))
 app.use('/api/edesk', require('./controllers/edesk.js'))
 app.use('/api/hos', require('./controllers/hos.js'))
-app.use('/api/hosp', require('./controllers/hosp.js'))
 app.use('/api/hospital', require('./controllers/hospital.js'))
+app.use('/api/lms', require('./controllers/lms.js'))
+app.use('/api/lmsusers', require('./controllers/lmsusers.js'))
 app.use('/api/patient', require('./controllers/patient.js'))
 app.use('/api/permissions', require('./controllers/permissions.js'))
 app.use('/api/requestkyc', require('./controllers/requestkyc.js'))
@@ -71,7 +72,7 @@ app.get('*', function(req, res){
     res.status(404).json("Page not found");
 });
 
-let port = 7016;
+let port = 7017;
 //start app
 app.listen(port, () => {
     console.log('Server is up and running on port: ' + port);

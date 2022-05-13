@@ -31,8 +31,9 @@ const Admin =  require("./admin").init(sequelize, Sequelize);
 const Categories =  require("./categories").init(sequelize, Sequelize);
 const Edesk =  require("./edesk").init(sequelize, Sequelize);
 const Hos =  require("./hos").init(sequelize, Sequelize);
-const Hosp =  require("./hosp").init(sequelize, Sequelize);
 const Hospital =  require("./hospital").init(sequelize, Sequelize);
+const Lms =  require("./lms").init(sequelize, Sequelize);
+const Lmsusers =  require("./lmsusers").init(sequelize, Sequelize);
 const Patient =  require("./patient").init(sequelize, Sequelize);
 const Permissions =  require("./permissions").init(sequelize, Sequelize);
 const Requestkyc =  require("./requestkyc").init(sequelize, Sequelize);
@@ -48,8 +49,9 @@ module.exports = {
 	Categories,
 	Edesk,
 	Hos,
-	Hosp,
 	Hospital,
+	Lms,
+	Lmsusers,
 	Patient,
 	Permissions,
 	Requestkyc,
